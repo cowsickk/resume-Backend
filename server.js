@@ -17,8 +17,14 @@ const pdfParse = pdfParseLib.default || pdfParseLib;
 
 const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
-
-app.use(cors({ origin: "http://localhost:5173", exposedHeaders: ["Content-Disposition", "Content-Type"] }));
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "https://resume-frontend-three.vercel.app"
+  ],
+  credentials: true,
+  exposedHeaders: ["Content-Disposition", "Content-Type"]
+}));
 app.use(express.json());
 
 const db = mysql.createConnection({
