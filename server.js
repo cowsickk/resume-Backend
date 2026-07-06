@@ -21,8 +21,21 @@ const upload = multer({ storage: multer.memoryStorage() });
 app.use(cors({ origin: "http://localhost:5173", exposedHeaders: ["Content-Disposition", "Content-Type"] }));
 app.use(express.json());
 
-const db = mysql.createConnection({ host: "127.0.0.1", user: "root", password: "sql@123", database: "login_app" });
-db.connect(err => err ? console.log("MySQL error:", err) : console.log("MySQL Connected"));
+const db = mysql.createConnection({
+  host: process.env.MYSQLHOST,
+  user: process.env.MYSQLUSER,
+  password: process.env.MYSQLPASSWORD,
+  database: process.env.MYSQLDATABASE,
+  port: process.env.MYSQLPORT
+});
+
+db.connect((err) => {
+  if (err) {
+    console.error("MySQL Error:", err);
+  } else {
+    console.log("MySQL Connected");
+  }
+});
 
 async function callAI(prompt) {
   const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
