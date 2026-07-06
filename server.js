@@ -29,14 +29,6 @@ const db = mysql.createConnection({
   port: process.env.MYSQLPORT
 });
 
-db.connect((err) => {
-  if (err) {
-    console.error("MySQL Error:", err);
-  } else {
-    console.log("MySQL Connected");
-  }
-});
-
 async function callAI(prompt) {
   const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
