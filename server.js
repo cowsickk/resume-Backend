@@ -98,13 +98,13 @@ app.post("/generate-resume-base", async (req, res) => {
     const { role, experienceLevel } = req.body;
     const prompt = `Generate a resume professional summary and categorized skills for a ${experienceLevel} ${role}.
 Rules:
-- Write in FIRST PERSON, 7-8 well-written sentences, natural and professional, ATS-friendly
+- Write in FIRST PERSON, 8-9 well-written sentences, natural and professional, ATS-friendly
 - Cover: technical expertise, academic background, problem-solving ability, interest in software/AI, and career objective
 - Avoid empty buzzwords like "synergy", "leverage", "dynamic"
 - Categorize skills using ONLY these category names (omit any that don't apply): "Programming Languages", "Web Development", "Frameworks & Libraries", "Databases", "AI / Machine Learning", "Data Structures & Algorithms", "Tools & Platforms", "Others"
 - Put skills like Vibe Coding, Prompt Engineering, C/C++, Error Handling under "Others"
 Respond ONLY in JSON, no extra text:
-{"summary":"7-8 sentence first-person summary","skillCategories":{"Programming Languages":["Java","Python"],"Web Development":["HTML","CSS","JavaScript"],"Frameworks & Libraries":["React","Node.js","Flask"],"Databases":["MySQL","MongoDB","SQLite"],"AI / Machine Learning":["Machine Learning","Generative AI","LLMs"],"Tools & Platforms":["Git","Postman"],"Others":["Prompt Engineering","C/C++"]},"skills":["Java","Python","HTML","CSS","JavaScript","React","Node.js","Flask","MySQL","MongoDB","SQLite","Machine Learning","Generative AI","Git","Postman","Prompt Engineering","C/C++"]}`;
+{"summary":"8-9 sentence first-person summary","skillCategories":{"Programming Languages":["Java","Python"],"Web Development":["HTML","CSS","JavaScript"],"Frameworks & Libraries":["React","Node.js","Flask"],"Databases":["MySQL","MongoDB","SQLite"],"AI / Machine Learning":["Machine Learning","Generative AI","LLMs"],"Tools & Platforms":["Git","Postman"],"Others":["Prompt Engineering","C/C++"]},"skills":["Java","Python","HTML","CSS","JavaScript","React","Node.js","Flask","MySQL","MongoDB","SQLite","Machine Learning","Generative AI","Git","Postman","Prompt Engineering","C/C++"]}`;
     const text = await callAI(prompt);
     const clean = text.replace(/```json/gi, "").replace(/```/g, "").trim();
     const parsed = JSON.parse(clean.substring(clean.indexOf("{"), clean.lastIndexOf("}") + 1));
@@ -482,7 +482,7 @@ html,body{width:210mm;font-family:Georgia,'Times New Roman',serif;font-size:11.5
     ${v(education) ? `<div class="st">Education</div>${renderEducation(education, { instColor: "#1a1a1a" })}` : ""}
     <div class="st">Participations &amp; Certifications</div>${renderParticipationsAndCerts(participations, certifications)}
     ${v(leadership) ? `<div class="st">Leadership &amp; Event Conductions</div><p>${leadership}</p>` : ""}
-    ${v(languages) || v(additionalInfo) ? `<div class="st">Additional Information</div><p>${v(additionalInfo) ? `<strong>Course Work:</strong> ${additionalInfo}<br>` : ""}${v(languages) ? `<strong>Languages Known:</strong> ${languages}` : ""}</p>` : ""}
+    ${v(languages) || v(additionalInfo) ? `<div class="sec"><div class="tl"><div class="dot"></div></div><div class="sb"><div class="st">Additional Information</div><p>${v(additionalInfo) ? additionalInfo + `<br>` : ""}${v(languages) ? `Languages: ${languages}` : ""}</p></div></div>` : ""}
   </div>
 </div>
 ${fitScript}</body></html>`;
@@ -514,7 +514,7 @@ p{font-size:11.5px;line-height:1.65;color:#222;text-align:justify;}
   ${v(education) ? `<div class="st">Education</div>${renderEducation(education)}` : ""}
   <div class="st">Participations &amp; Certifications</div>${renderParticipationsAndCerts(participations, certifications)}
   ${v(leadership) ? `<div class="st">Leadership &amp; Event Conductions</div><p>${leadership}</p>` : ""}
-  ${v(languages) || v(additionalInfo) ? `<div class="st">Additional Information</div><p>${v(additionalInfo) ? `<strong>Course Work:</strong> ${additionalInfo}<br>` : ""}${v(languages) ? `<strong>Languages Known:</strong> ${languages}` : ""}</p>` : ""}
+    ${v(languages) || v(additionalInfo) ? `<div class="sec"><div class="tl"><div class="dot"></div></div><div class="sb"><div class="st">Additional Information</div><p>${v(additionalInfo) ? additionalInfo + `<br>` : ""}${v(languages) ? `Languages: ${languages}` : ""}</p></div></div>` : ""}
 </div>
 ${fitScript}</body></html>`;
 
@@ -594,7 +594,7 @@ p{font-size:11.5px;line-height:1.65;color:#333;text-align:justify;}
     <div><div class="st">Participations &amp; Certifications</div>${renderParticipationsAndCerts(participations, certifications)}</div>
   </div>
   ${v(leadership) ? `<div class="st">Leadership &amp; Event Conductions</div><p>${leadership}</p>` : ""}
-  ${v(languages) || v(additionalInfo) ? `<div class="st">Additional Information</div><p>${v(additionalInfo) ? `<strong>Course Work:</strong> ${additionalInfo}<br>` : ""}${v(languages) ? `<strong>Languages Known:</strong> ${languages}` : ""}</p>` : ""}
+    ${v(languages) || v(additionalInfo) ? `<div class="sec"><div class="tl"><div class="dot"></div></div><div class="sb"><div class="st">Additional Information</div><p>${v(additionalInfo) ? additionalInfo + `<br>` : ""}${v(languages) ? `Languages: ${languages}` : ""}</p></div></div>` : ""}
 </div>
 ${fitScript}</body></html>`;
 
