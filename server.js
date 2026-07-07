@@ -64,9 +64,9 @@ async function callAI(prompt) {
   return data.choices[0].message.content;
 }
 
-/* ═══════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    AUTH ROUTES
-═══════════════════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 app.post("/register", async (req, res) => {
   const { username, password } = req.body;
   try {
@@ -90,9 +90,9 @@ app.post("/login", (req, res) => {
   });
 });
 
-/* ═══════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    AI BASE PROFILE
-═══════════════════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 app.post("/generate-resume-base", async (req, res) => {
   try {
     const { role, experienceLevel } = req.body;
@@ -114,15 +114,15 @@ Respond ONLY in JSON, no extra text:
   }
 });
 
-/* ═══════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    SHARED RENDERING HELPERS
    All font sizes set at professional resume standard:
-   • Body text / bullets  : 11.5 px
-   • Entry titles          : 13 px bold
-   • Dates / secondary     : 10.5 px
-   • Skill category labels : 12 px bold
-   • Cert / participation  : 11.5 px
-═══════════════════════════════════════════════════════ */
+   â€¢ Body text / bullets  : 11.5 px
+   â€¢ Entry titles          : 13 px bold
+   â€¢ Dates / secondary     : 10.5 px
+   â€¢ Skill category labels : 12 px bold
+   â€¢ Cert / participation  : 11.5 px
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 // Skills that must always go into "Others" regardless of technical keyword matches
 const OTHERS_SKILLS = [
@@ -234,7 +234,7 @@ function renderSkills(skillCategories, skills, mode = "rows") {
     cats = fallbackCategorize(allSkills);
   }
   const entries = Object.entries(cats).filter(([, items]) => Array.isArray(items) && items.length);
-  if (!entries.length) return `<span style="font-size:11.5px;color:#777;">—</span>`;
+  if (!entries.length) return `<span style="font-size:11.5px;color:#777;">â€”</span>`;
 
   if (mode === "grid4") {
     // 4-column grid used by Banner Sections template
@@ -246,7 +246,7 @@ function renderSkills(skillCategories, skills, mode = "rows") {
     </div>`;
   }
 
-  // rows mode — bold category, colon, comma-separated list on same line
+  // rows mode â€” bold category, colon, comma-separated list on same line
   return `<div style="margin-top:3px;">` + entries.map(([cat, items]) =>
     `<div style="display:flex;margin-bottom:5px;align-items:baseline;">
       <span style="font-size:12px;font-weight:700;color:#111;min-width:158px;flex-shrink:0;">${cat}:</span>
@@ -255,16 +255,22 @@ function renderSkills(skillCategories, skills, mode = "rows") {
   ).join("") + `</div>`;
 }
 
-// Certifications — clean bullet list, no boxes, no color
+function stripLeadingListSymbol(text) {
+  return String(text)
+    .replace(/^(?:&bull;|&#8226;|â€¢|•|-|–|—|>|◆|▸|›)\s*/g, "")
+    .trim();
+}
+
+// Certifications - clean plain list, no bullets, no boxes, no color
 function certList(certifications) {
   const list = (typeof certifications === "string"
-    ? certifications.split(",")
+    ? certifications.split(/\r?\n|,/)
     : Array.isArray(certifications) ? certifications : []
-  ).map(s => s.trim()).filter(Boolean);
-  if (!list.length) return `<span style="font-size:11.5px;color:#777;">—</span>`;
+  ).map(stripLeadingListSymbol).filter(Boolean);
+  if (!list.length) return `<span style="font-size:11.5px;color:#777;">â€”</span>`;
   return `<ul style="list-style:none;padding:0;margin:0;">${list.map(c =>
-    `<li style="font-size:11.5px;color:#222;padding-left:14px;position:relative;margin-bottom:4px;line-height:1.55;">
-      <span style="position:absolute;left:0;top:0;">•</span>${c}
+    `<li style="font-size:11.5px;color:#222;padding-left:0;margin-bottom:4px;line-height:1.55;">
+      ${c}
     </li>`
   ).join("")}</ul>`;
 }
@@ -274,7 +280,7 @@ function renderParticipationsAndCerts(participations, certifications, headColor 
   const hasPart = participations && String(participations).trim();
   const hasCert = certifications && (Array.isArray(certifications)
     ? certifications.length : String(certifications).trim());
-  if (!hasPart && !hasCert) return `<span style="font-size:11.5px;color:#777;">—</span>`;
+  if (!hasPart && !hasCert) return `<span style="font-size:11.5px;color:#777;">â€”</span>`;
   return `
     ${hasPart ? `<div style="font-size:10px;font-weight:700;color:${headColor};margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px;">Participations</div>
     <p style="font-size:11.5px;line-height:1.65;color:#333;margin-bottom:${hasCert ? "9px" : "0"};">${participations}</p>` : ""}
@@ -283,11 +289,11 @@ function renderParticipationsAndCerts(participations, certifications, headColor 
   `;
 }
 
-// Experience — blocks separated by blank lines
+// Experience â€” blocks separated by blank lines
 function renderExperience(text, o = {}) {
   const tc = o.titleColor || "#1a1a1a", dc = o.dateColor || "#555", bc = o.bulletColor || "#333";
   const timeline = o.timeline === true;
-  if (!text || !text.trim()) return `<div style="font-size:11.5px;color:#777;">—</div>`;
+  if (!text || !text.trim()) return `<div style="font-size:11.5px;color:#777;">â€”</div>`;
   return text.split("\n\n").filter(b => b.trim()).map(block => {
     const lines = block.split("\n").filter(l => l.trim());
     if (!lines.length) return "";
@@ -302,7 +308,7 @@ function renderExperience(text, o = {}) {
       </div>
       ${rest.length ? `<ul style="list-style:none;padding:0;margin-top:3px;">${rest.map(l =>
         `<li style="font-size:11.5px;color:${bc};padding-left:14px;position:relative;margin-bottom:3px;line-height:1.55;">
-          <span style="position:absolute;left:0;">•</span>${l.replace(/^[•\-▸›◆>]\s*/, "")}
+          <span style="position:absolute;left:0;">â€¢</span>${l.replace(/^[â€¢\-â–¸â€ºâ—†>]\s*/, "")}
         </li>`
       ).join("")}</ul>` : ""}
     </div>`;
@@ -316,35 +322,35 @@ function renderExperience(text, o = {}) {
   }).join("");
 }
 
-// Projects — numbered entries with plain-text tech stack line
+// Projects â€” numbered entries with plain-text tech stack line
 function renderProjects(text, o = {}) {
   const nc = o.nameColor || "#1a1a1a", sc = o.stackColor || "#555", bc = o.bulletColor || "#333";
   const numbered = o.numbered !== false;
-  if (!text || !text.trim()) return `<div style="font-size:11.5px;color:#777;">—</div>`;
+  if (!text || !text.trim()) return `<div style="font-size:11.5px;color:#777;">â€”</div>`;
   return text.split("\n\n").filter(b => b.trim()).map((block, idx) => {
     const lines = block.split("\n").filter(l => l.trim());
     if (!lines.length) return "";
     const [h, ...rest] = lines;
-    const pipeIdx = h.indexOf("|"), dashIdx = h.indexOf(" — ");
+    const pipeIdx = h.indexOf("|"), dashIdx = h.indexOf(" â€” ");
     const splitIdx = pipeIdx > -1 ? pipeIdx : dashIdx > -1 ? dashIdx : -1;
     const pName = splitIdx > -1 ? h.substring(0, splitIdx).trim() : h;
-    const stack = splitIdx > -1 ? h.substring(splitIdx + 1).replace(/^\|?\s*—?\s*/, "").trim() : "";
+    const stack = splitIdx > -1 ? h.substring(splitIdx + 1).replace(/^\|?\s*â€”?\s*/, "").trim() : "";
     return `<div style="margin-bottom:10px;">
       <span style="font-size:13px;font-weight:700;color:${nc};">${numbered ? (idx + 1) + ". " : ""}${pName}</span>
       ${stack ? `<div style="font-size:10.5px;color:${sc};margin-top:2px;"><strong>Tech Stack:</strong> ${stack}</div>` : ""}
       ${rest.length ? `<ul style="list-style:none;padding:0;margin-top:3px;">${rest.map(l =>
         `<li style="font-size:11.5px;color:${bc};padding-left:14px;position:relative;margin-bottom:3px;line-height:1.55;">
-          <span style="position:absolute;left:0;">•</span>${l.replace(/^[•\-▸›◆>]\s*/, "")}
+          <span style="position:absolute;left:0;">â€¢</span>${l.replace(/^[â€¢\-â–¸â€ºâ—†>]\s*/, "")}
         </li>`
       ).join("")}</ul>` : ""}
     </div>`;
   }).join("");
 }
 
-// Education — blocks separated by blank lines
+// Education â€” blocks separated by blank lines
 function renderEducation(text, o = {}) {
   const ic = o.instColor || "#1a1a1a", dc = o.dateColor || "#555", infoC = o.infoColor || "#444";
-  if (!text || !text.trim()) return `<div style="font-size:11.5px;color:#777;">—</div>`;
+  if (!text || !text.trim()) return `<div style="font-size:11.5px;color:#777;">â€”</div>`;
   return text.split("\n\n").filter(b => b.trim()).map(block => {
     const lines = block.split("\n").filter(l => l.trim());
     if (!lines.length) return "";
@@ -374,7 +380,36 @@ function contactLineWithIcons(p, sep = " &nbsp;|&nbsp; ") {
   return [...basics, ...socials].join(sep);
 }
 
-const v = x => x || "";
+function v(x) {
+  if (x === null || x === undefined) return "";
+  if (Array.isArray(x)) {
+    return x
+      .map(item => {
+        if (item === null || item === undefined) return "";
+        if (typeof item === "object") return Object.values(item).filter(Boolean).join(" - ");
+        return String(item);
+      })
+      .map(s => s.trim())
+      .filter(Boolean)
+      .join("<br>");
+  }
+  if (typeof x === "object") return Object.values(x).filter(Boolean).join("<br>").trim();
+  return String(x).trim();
+}
+
+function renderAdditionalInfo(additionalInfo, languages, title = "Additional Information") {
+  const info = v(additionalInfo);
+  const langs = v(languages);
+  if (!info && !langs) return "";
+  return `<div class="st">${title}</div><p>${info ? `<strong>Course Work:</strong> ${info}${langs ? "<br>" : ""}` : ""}${langs ? `<strong>Languages Known:</strong> ${langs}` : ""}</p>`;
+}
+
+function renderAdditionalInfoText(additionalInfo, languages, languageLabel = "Languages Known") {
+  const info = v(additionalInfo);
+  const langs = v(languages);
+  if (!info && !langs) return "";
+  return `${info ? `<strong>Course Work:</strong> ${info}${langs ? "<br>" : ""}` : ""}${langs ? `<strong>${languageLabel}:</strong> ${langs}` : ""}`;
+}
 
 // Inline fit-to-page script (fallback safety; Puppeteer-side also runs)
 const fitScript = `<script>
@@ -392,28 +427,42 @@ window.onload = function() {
 };
 </script>`;
 
-/* ═══════════════════════════════════════════════════════
-   GENERATE RESUME — 6 TEMPLATES
-═══════════════════════════════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   GENERATE RESUME â€” 6 TEMPLATES
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 app.post("/generate-resume", async (req, res) => {
   try {
     const {
       role, fullName, email, phone, location, linkedin, github, summary,
       skills, skillCategories, projects, experience, education,
-      certifications, participations, leadership, languages, additionalInfo,
+      certifications, participations, leadership, languages,
+      additionalInfo: additionalInfoBody,
+      additionalInformation, additional_information, courseWork, coursework,
+      otherInfo, other_info, additional,
       templateId
     } = req.body;
+
+    const additionalInfo = v(
+      additionalInfoBody ??
+      additionalInformation ??
+      additional_information ??
+      courseWork ??
+      coursework ??
+      otherInfo ??
+      other_info ??
+      additional
+    );
 
     const contact = {
       email: v(email), phone: v(phone), location: v(location),
       linkedin: v(linkedin), github: v(github)
     };
 
-    /* ════════════════════════════════════════════════════
-       TEMPLATE 1 — CLASSIC CORPORATE
+    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+       TEMPLATE 1 â€” CLASSIC CORPORATE
        Bold name, 2.5 px rule, label | bar | content rows.
-       Body: 11.5 px · Name: 28 px · Role: 13 px
-    ════════════════════════════════════════════════════ */
+       Body: 11.5 px Â· Name: 28 px Â· Role: 13 px
+    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
     const T_CLASSIC = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{width:210mm;font-family:Arial,Helvetica,sans-serif;color:#111;background:#fff;font-size:11.5px;}
@@ -446,15 +495,15 @@ html,body{width:210mm;font-family:Arial,Helvetica,sans-serif;color:#111;backgrou
   ${v(education) ? `<div class="sec"><div class="lbl"><span>Education</span></div><div class="vbar"></div><div class="body">${renderEducation(education)}</div></div>` : ""}
   <div class="sec"><div class="lbl"><span>Participations &amp; Certs</span></div><div class="vbar"></div><div class="body">${renderParticipationsAndCerts(participations, certifications)}</div></div>
   ${v(leadership) ? `<div class="sec"><div class="lbl"><span>Leadership</span></div><div class="vbar"></div><div class="body"><p style="font-size:11.5px;line-height:1.65;color:#222;">${leadership}</p></div></div>` : ""}
-  ${v(languages) || v(additionalInfo) ? `<div class="sec"><div class="lbl"><span>Additional</span></div><div class="vbar"></div><div class="body"><p style="font-size:11.5px;line-height:1.65;color:#222;">${v(additionalInfo) ? `<strong>Course Work:</strong> ${additionalInfo}<br>` : ""}${v(languages) ? `<strong>Languages Known:</strong> ${languages}` : ""}</p></div></div>` : ""}
+  ${renderAdditionalInfoText(additionalInfo, languages) ? `<div class="sec"><div class="lbl"><span>Additional</span></div><div class="vbar"></div><div class="body"><p style="font-size:11.5px;line-height:1.65;color:#222;">${renderAdditionalInfoText(additionalInfo, languages)}</p></div></div>` : ""}
 </div>
 ${fitScript}</body></html>`;
 
-    /* ════════════════════════════════════════════════════
-       TEMPLATE 2 — EXECUTIVE
+    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+       TEMPLATE 2 â€” EXECUTIVE
        Dark charcoal header, Georgia serif.
-       Body: 11.5 px · Name: 25 px · Section headers: 10 px
-    ════════════════════════════════════════════════════ */
+       Body: 11.5 px Â· Name: 25 px Â· Section headers: 10 px
+    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
     const T_EXECUTIVE = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{width:210mm;font-family:Georgia,'Times New Roman',serif;font-size:11.5px;color:#1a1a1a;}
@@ -482,16 +531,16 @@ html,body{width:210mm;font-family:Georgia,'Times New Roman',serif;font-size:11.5
     ${v(education) ? `<div class="st">Education</div>${renderEducation(education, { instColor: "#1a1a1a" })}` : ""}
     <div class="st">Participations &amp; Certifications</div>${renderParticipationsAndCerts(participations, certifications)}
     ${v(leadership) ? `<div class="st">Leadership &amp; Event Conductions</div><p>${leadership}</p>` : ""}
-    ${v(languages) || v(additionalInfo) ? `<div class="st">Additional Information</div><p>${v(additionalInfo) ? `<strong>Course Work:</strong> ${additionalInfo}<br>` : ""}${v(languages) ? `<strong>Languages Known:</strong> ${languages}` : ""}</p>` : ""}
+    ${renderAdditionalInfo(additionalInfo, languages)}
   </div>
 </div>
 ${fitScript}</body></html>`;
 
-    /* ════════════════════════════════════════════════════
-       TEMPLATE 3 — MINIMAL ELEGANT
+    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+       TEMPLATE 3 â€” MINIMAL ELEGANT
        Centred uppercase name, ruled sections.
-       Body: 11.5 px · Name: 24 px · Section headers: 12 px
-    ════════════════════════════════════════════════════ */
+       Body: 11.5 px Â· Name: 24 px Â· Section headers: 12 px
+    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
     const T_MINIMAL = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{width:210mm;font-family:Arial,Helvetica,sans-serif;color:#111;background:#fff;font-size:11.5px;}
@@ -514,15 +563,15 @@ p{font-size:11.5px;line-height:1.65;color:#222;text-align:justify;}
   ${v(education) ? `<div class="st">Education</div>${renderEducation(education)}` : ""}
   <div class="st">Participations &amp; Certifications</div>${renderParticipationsAndCerts(participations, certifications)}
   ${v(leadership) ? `<div class="st">Leadership &amp; Event Conductions</div><p>${leadership}</p>` : ""}
-  ${v(languages) || v(additionalInfo) ? `<div class="st">Additional Information</div><p>${v(additionalInfo) ? `<strong>Course Work:</strong> ${additionalInfo}<br>` : ""}${v(languages) ? `<strong>Languages Known:</strong> ${languages}` : ""}</p>` : ""}
+  ${renderAdditionalInfo(additionalInfo, languages)}
 </div>
 ${fitScript}</body></html>`;
 
-    /* ════════════════════════════════════════════════════
-       TEMPLATE 4 — CLEAN TIMELINE
+    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+       TEMPLATE 4 â€” CLEAN TIMELINE
        Gray gradient left strip, dot timeline, overflow visible.
-       Body: 11 px · Name: 22 px · Section headers: 9.5 px
-    ════════════════════════════════════════════════════ */
+       Body: 11 px Â· Name: 22 px Â· Section headers: 9.5 px
+    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
     const T_TIMELINE = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{width:210mm;height:297mm;overflow:hidden;font-family:Arial,sans-serif;font-size:11px;}
@@ -556,16 +605,16 @@ p{font-size:11px;line-height:1.65;color:#333;}
     ${v(education) ? `<div class="sec"><div class="tl"><div class="dot"></div><div class="line"></div></div><div class="sb"><div class="st">Education</div>${renderEducation(education, { instColor: "#1a1a1a" })}</div></div>` : ""}
     <div class="sec"><div class="tl"><div class="dot"></div><div class="line"></div></div><div class="sb"><div class="st">Participations &amp; Certifications</div>${renderParticipationsAndCerts(participations, certifications)}</div></div>
     ${v(leadership) ? `<div class="sec"><div class="tl"><div class="dot"></div><div class="line"></div></div><div class="sb"><div class="st">Leadership</div><p>${leadership}</p></div></div>` : ""}
-    ${v(languages) || v(additionalInfo) ? `<div class="sec"><div class="tl"><div class="dot"></div></div><div class="sb"><div class="st">Additional Information</div><p>${v(additionalInfo) ? additionalInfo + `<br>` : ""}${v(languages) ? `Languages: ${languages}` : ""}</p></div></div>` : ""}
+    ${renderAdditionalInfoText(additionalInfo, languages, "Languages") ? `<div class="sec"><div class="tl"><div class="dot"></div></div><div class="sb"><div class="st">Additional Information</div><p>${renderAdditionalInfoText(additionalInfo, languages, "Languages")}</p></div></div>` : ""}
   </div>
 </div>
 ${fitScript}</body></html>`;
 
-    /* ════════════════════════════════════════════════════
-       TEMPLATE 5 — ACADEMIC DETAILED
+    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+       TEMPLATE 5 â€” ACADEMIC DETAILED
        Dense single-col, 2-col grid for edu/certs.
-       Body: 11.5 px · Name: 25 px · Section headers: 10 px
-    ════════════════════════════════════════════════════ */
+       Body: 11.5 px Â· Name: 25 px Â· Section headers: 10 px
+    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
     const T_ACADEMIC = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{width:210mm;font-family:Arial,Helvetica,sans-serif;color:#1a1a1a;font-size:11.5px;}
@@ -594,15 +643,15 @@ p{font-size:11.5px;line-height:1.65;color:#333;text-align:justify;}
     <div><div class="st">Participations &amp; Certifications</div>${renderParticipationsAndCerts(participations, certifications)}</div>
   </div>
   ${v(leadership) ? `<div class="st">Leadership &amp; Event Conductions</div><p>${leadership}</p>` : ""}
-  ${v(languages) || v(additionalInfo) ? `<div class="st">Additional Information</div><p>${v(additionalInfo) ? `<strong>Course Work:</strong> ${additionalInfo}<br>` : ""}${v(languages) ? `<strong>Languages Known:</strong> ${languages}` : ""}</p>` : ""}
+  ${renderAdditionalInfo(additionalInfo, languages)}
 </div>
 ${fitScript}</body></html>`;
 
-    /* ════════════════════════════════════════════════════
-       TEMPLATE 6 — BANNER SECTIONS
+    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+       TEMPLATE 6 â€” BANNER SECTIONS
        Full-width gray banners, 4-col skill grid.
-       Body: 11.5 px · Name: 26 px · Banner text: 11.5 px
-    ════════════════════════════════════════════════════ */
+       Body: 11.5 px Â· Name: 26 px Â· Banner text: 11.5 px
+    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
     const banner = (text) =>
       `<div style="background:#e0e0e0;padding:6px 11px;margin-top:11px;margin-bottom:7px;">
         <span style="font-size:11.5px;font-weight:700;font-style:italic;letter-spacing:0.5px;color:#111;text-transform:uppercase;">${text}</span>
@@ -630,13 +679,13 @@ p{font-size:11.5px;line-height:1.65;color:#222;text-align:justify;}
   ${v(education) ? `${banner("Education")}${renderEducation(education)}` : ""}
   ${banner("Participations &amp; Certifications")}${renderParticipationsAndCerts(participations, certifications)}
   ${v(leadership) ? `${banner("Leadership &amp; Event Conductions")}<p>${leadership}</p>` : ""}
-  ${v(languages) || v(additionalInfo) ? `${banner("Additional Information")}<p>${v(additionalInfo) ? `<strong>Course Work:</strong> ${additionalInfo}<br>` : ""}${v(languages) ? `<strong>Languages Known:</strong> ${languages}` : ""}</p>` : ""}
+  ${renderAdditionalInfoText(additionalInfo, languages) ? `${banner("Additional Information")}<p>${renderAdditionalInfoText(additionalInfo, languages)}</p>` : ""}
 </div>
 ${fitScript}</body></html>`;
 
-    /* ════════════════════════════════════════════════════
+    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
        TEMPLATE MAP & PUPPETEER
-    ════════════════════════════════════════════════════ */
+    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
     const htmlMap = {
       "classic-corporate": T_CLASSIC,
       "executive":         T_EXECUTIVE,
@@ -650,7 +699,7 @@ ${fitScript}</body></html>`;
 
     const fitConfig = {
       "classic-corporate": { shell: ".rr", content: ".rr" },
-      "executive":         { shell: ".rr", content: ".bd" },
+      "executive":         { shell: ".rr", content: ".rr" },
       "minimal-elegant":   { shell: ".rr", content: ".rr" },
       "clean-timeline":    { shell: ".rp", content: ".cn" },
       "academic-detailed": { shell: ".rr", content: ".rr" },
@@ -715,7 +764,7 @@ ${fitScript}</body></html>`;
   }
 });
 
-/* ═══════════════ ANALYSE RESUME ═══════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• ANALYSE RESUME â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 app.post("/analyse-resume", upload.single("resume"), async (req, res) => {
   try {
     const { role } = req.body;
@@ -729,8 +778,8 @@ app.post("/analyse-resume", upload.single("resume"), async (req, res) => {
     const prompt = `You are an expert professional resume analyst. A candidate has uploaded their resume and wants it evaluated for the role: "${role}".
 
 Your tasks:
-1. Calculate a realistic match score (0–100) based on how well the resume's skills, experience, and content align with the requirements of the role "${role}".
-2. Identify specific skills or qualifications that are MISSING from this resume but are commonly required for a "${role}" position. List real, specific missing skills — not generic advice.
+1. Calculate a realistic match score (0â€“100) based on how well the resume's skills, experience, and content align with the requirements of the role "${role}".
+2. Identify specific skills or qualifications that are MISSING from this resume but are commonly required for a "${role}" position. List real, specific missing skills â€” not generic advice.
 3. Provide exactly 5 specific, actionable, and practical improvement suggestions tailored to this resume and this role. Each suggestion should reference something concrete from the resume or the role requirements.
 
 Be honest, critical, and specific. Do not give generic advice. Base your analysis entirely on the resume content provided below.
@@ -740,7 +789,7 @@ Resume Content:
 ${resumeText.trim()}
 """
 
-Respond ONLY with a valid JSON object in this exact format — no explanation, no markdown, no extra text:
+Respond ONLY with a valid JSON object in this exact format â€” no explanation, no markdown, no extra text:
 {
   "matchScore": <integer 0-100>,
   "missingSkills": ["<specific skill 1>", "<specific skill 2>", "<specific skill 3>"],
@@ -767,7 +816,7 @@ Respond ONLY with a valid JSON object in this exact format — no explanation, n
   }
 });
 
-/* ═══════════════ ATS CHECK ═══════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• ATS CHECK â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 app.post("/ats-check", upload.single("resume"), async (req, res) => {
   try {
     const { role, jobDescription } = req.body;
@@ -781,11 +830,11 @@ app.post("/ats-check", upload.single("resume"), async (req, res) => {
     const prompt = `You are an expert ATS (Applicant Tracking System) specialist. Analyse the resume below for the role "${role}"${jobDescription ? ` using the provided job description` : ""}.
 
 Your analysis tasks:
-1. ATS Score (0–100): Overall likelihood the resume passes ATS filters for this role. Be realistic.
+1. ATS Score (0â€“100): Overall likelihood the resume passes ATS filters for this role. Be realistic.
 2. Keyword Match: List keywords/skills PRESENT in the resume that are relevant to the role. Then list important keywords/skills that are MISSING from the resume for this role.
 3. Formatting Issues: Identify specific formatting problems that could cause ATS parsing failures (e.g. tables, columns, images, missing sections, special characters, header/footer placement). If none, return an empty array.
-4. Section Completeness: For each standard resume section — Summary, Skills, Experience, Education, Certifications — state whether it is "Present", "Missing", or "Incomplete".
-5. Readability Score (0–100): How readable and clear the resume is for a human recruiter.
+4. Section Completeness: For each standard resume section â€” Summary, Skills, Experience, Education, Certifications â€” state whether it is "Present", "Missing", or "Incomplete".
+5. Readability Score (0â€“100): How readable and clear the resume is for a human recruiter.
 6. Readability Feedback: One or two sentences of specific, actionable feedback on readability and writing quality.
 ${jobDescription ? `\nJob Description:\n"""\n${jobDescription}\n"""` : ""}
 
@@ -794,7 +843,7 @@ Resume Content:
 ${resumeText.trim()}
 """
 
-Respond ONLY with a valid JSON object in this exact format — no explanation, no markdown, no extra text:
+Respond ONLY with a valid JSON object in this exact format â€” no explanation, no markdown, no extra text:
 {
   "atsScore": <integer 0-100>,
   "keywordMatch": {
@@ -833,5 +882,7 @@ Respond ONLY with a valid JSON object in this exact format — no explanation, n
   }
 });
 
-app.get("/", (req, res) => res.send("ResumeBuilder Backend Running ✅"));
+app.get("/", (req, res) => res.send("ResumeBuilder Backend Running âœ…"));
 app.listen(5000, () => console.log("Server running on port 5000"));
+
+
