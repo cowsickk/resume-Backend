@@ -384,16 +384,36 @@ window.onload = function() {
 ═══════════════════════════════════════════════════════ */
 app.post("/generate-resume", async (req, res) => {
   try {
-    const {
-      role, fullName, email, phone, location, linkedin, github, summary,
-      skills, skillCategories, projects, experience, education,
-      certifications, participations, leadership, languages, additionalInfo,
-      templateId
-    } = req.body;
+    const body = req.body;
+
+    // Normalize every field — guarantees strings (never undefined/null)
+    // inside template literals where JS && short-circuits on undefined.
+    const role           = v(body.role);
+    const fullName       = v(body.fullName);
+    const email          = v(body.email);
+    const phone          = v(body.phone);
+    const location       = v(body.location);
+    const linkedin       = v(body.linkedin);
+    const github         = v(body.github);
+    const summary        = v(body.summary);
+    const skills         = Array.isArray(body.skills) ? body.skills : [];
+    const skillCategories = (body.skillCategories && typeof body.skillCategories === "object") ? body.skillCategories : {};
+    const projects       = v(body.projects);
+    const experience     = v(body.experience);
+    const education      = v(body.education);
+    const certifications = v(body.certifications);
+    const participations = v(body.participations);
+    const leadership     = v(body.leadership);
+    const languages      = v(body.languages);
+    const additionalInfo = v(body.additionalInfo);
+    const templateId     = v(body.templateId);
+
+    // Debug — remove after confirming fix
+    console.log("[generate-resume] additionalInfo:", JSON.stringify(additionalInfo));
+    console.log("[generate-resume] languages:", JSON.stringify(languages));
 
     const contact = {
-      email: v(email), phone: v(phone), location: v(location),
-      linkedin: v(linkedin), github: v(github)
+      email, phone, location, linkedin, github
     };
 
     /* ════════════════════════════════════════════════════
